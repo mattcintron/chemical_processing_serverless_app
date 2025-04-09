@@ -1,0 +1,45 @@
+{
+    "dev": {
+        "app_function": "app.app",
+        "aws_region": "us-east-1",
+        // "domain": "app.scisheild.com",
+        //"certificate_arn": "arn:aws:acm:us-east-1:992382558816:certificate/af8c14c4-f264-4c7b-9fd4-aeef44306ca5",
+        "profile_name": "default",
+        "project_name": "scisheild-serverless-app",
+        "runtime": "python3.9",
+        "s3_bucket": "dev-scisheild-serverless-app",
+        "slim_handler": true,
+        "environment_variables": {
+            "ENV": "dev"
+        },
+        "tags": {
+            "creator": "matthew.cintron",
+            "environment": "dev",
+            "lifecycle": "active",
+            "project": "scishield-chemsnap",
+            "team": "vitality"
+        }
+    },
+
+    "prod": {
+        "app_function": "app.app",
+        "aws_region": "us-east-1",
+        // "domain": "qa.scisheild.com",
+        //"certificate_arn": "arn:aws:acm:us-east-1:992382558816:certificate/af8c14c4-f264-4c7b-9fd4-aeef44306ca5",
+        "profile_name": "default",
+        "project_name": "scisheild-serverless-app",
+        "runtime": "python3.9",
+        "s3_bucket": "prod-scisheild-serverless-app",
+        "slim_handler": true,
+        "environment_variables": {
+            "ENV": "prod"
+        },
+        "tags": {
+            "creator": "matthew.cintron",
+            "environment": "prod",
+            "lifecycle": "active",
+            "project": "scishield-chemsnap",
+            "team": "vitality"
+        }
+    }
+}

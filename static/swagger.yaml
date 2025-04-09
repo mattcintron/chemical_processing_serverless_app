@@ -1,0 +1,623 @@
+openapi: 3.0.0
+info:
+  title: LabTools API
+  version: 1.0.0
+  description: Demo authorization ---  organization_id abcd-1234-a1b2-1234 --- bearer demo@labtools.ai
+servers:
+  - url: https://api.labtools.ai
+    description: Production server
+  - url: https://dev.api.labtools.ai 
+    description: Development server
+  - url: http://localhost:5000
+    description: Local server
+
+paths:
+
+  /api/v1/status:
+    get:
+      tags:
+        - api
+      summary: Check API status
+      description: This endpoint can be used to check the status of the API.
+      responses:
+        '200':
+          description: Successful response if online
+
+  /api/v1/secure:
+    post:
+      tags:
+        - api
+      summary: Secure endpoint
+      description: This endpoint requires Api-Key and organization_id authentication as request headers. 
+
+      responses:
+        '200':
+          description: Successful response
+        '401':
+          description: Invalid API key or organization_id
+      security:
+        - bearer_auth: []
+          organization_id: []
+
+  /api/v1/unsecure:
+    get:
+      tags:
+        - api
+      summary: Unsecure endpoint
+      description: This endpoint does not require any authentication.
+      responses:
+        '200':
+          description: Successful response
+
+  /api/v1/authentication:
+    get:
+      tags:
+        - authentication
+      summary: Authentication details
+      description: Get details about the authentication method used in this API.
+      responses:
+        '200':
+          description: Successful response
+
+  /api/v1/upload/image:  
+    post:
+      tags:
+        - upload
+      summary: Upload image
+      description: Upload an image to the API.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+              required:
+                - image
+        required: true
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Invalid file format or metadata
+
+  /api/v1/upload/metadata:  
+    post:
+      tags:
+        - upload
+      summary: Upload metadata
+      description: Upload metadata to the API.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                metadata:
+                  type: string
+                  format: binary
+              required:
+                - metadata
+        required: true
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Invalid metadata format
+
+  /api/v1/upload/inventory_item:  # Changed route from /api/v1/upload_inventory_item to /api/v1/upload/inventory_item
+    post:
+      tags:
+        - upload
+      summary: Upload inventory item
+      description: Upload an inventory item to the API.
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                inventory_item:
+                  type: string
+                  format: binary
+              required:
+                - inventory_item
+        required: true
+      responses:
+        '200':
+          description: Successful response
+        '400':
+          description: Invalid inventory item format
+
+  /api/v1/predictions/inventory/forecast_7_day:
+    get:
+      tags:
+        - predictions
+      summary: Inventory Forecast (7-day horizon)
+      description: Get the inventory forecast for a 7-day horizon.
+      responses:
+        '200':
+          description: Successful response
+
+  /api/v1/predictions/inventory/forecast_14_day:
+    get:
+      tags:
+        - predictions
+      summary: Inventory Forecast (14-day horizon)
+      description: Get the inventory forecast for a 14-day horizon.
+      responses:
+        '200':
+          description: Successful response
+
+  /api/v1/predictions/inventory/forecast_30_day:
+    get:
+      tags:
+        - predictions
+      summary: Inventory Forecast (30-day horizon)
+      description: Get the inventory forecast for a 30-day horizon.
+      responses:
+        '200':
+          description: Successful response
+
+  /api/v1/predictions/inventory/forecast_60_day:
+    get:
+      tags:
+        - predictions
+      summary: Inventory Forecast (60-day horizon)
+      description: Get the inventory forecast for a 60-day horizon.
+      responses:
+        '200':
+          description: Successful response
+
+  /api/v1/predictions/image/segmentation:
+    post:
+      tags:
+        - predictions
+      summary: Image Segmentation
+      description: Perform image segmentation.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                parameters:
+                  type: object
+              required:
+                - image
+                - parameters
+        required: true
+      responses:
+        '200':
+          description: Successful response
+
+  /api/v1/predictions/image/object_detection:
+    post:
+      tags:
+        - predictions
+      summary: Object detection
+      description: Perform object detection tasks.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                task:
+                  type: string
+              required:
+                - image
+                - task
+        required: true
+      responses:
+        '200':
+          description: Successful response
+
+  /api/v1/predictions/sequence/classification:  # Changed route from /api/v1/predictions/sequence_classification to /api/v1/predict/sequence/classification
+    post:
+      tags:
+        - predictions
+      summary: Sequence Classification
+      description: Perform sequence classification.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sequence:
+                  type: string
+                task:
+                  type: string
+              required:
+                - sequence
+                - task
+        required: true
+      responses:
+        '200':
+          description: Successful response
+
+  /api/v1/predictions/sequence/regression:
+    post:
+      tags:
+        - predictions
+      summary: Sequence Regression
+      description: Perform sequence regression.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sequence:
+                  type: string
+                task:
+                  type: string
+              required:
+                - sequence
+                - task
+        required: true
+      responses:
+        '200':
+          description: Successful response
+
+# Optimization 
+
+  /api/v1/scheduleresults:
+    post:
+      tags:
+        - optimization
+      summary: Open endpoint
+      description: This endpoint allows you to send data and request to optimize said data to GPT-4.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gpt:
+                  type: string
+                  example: "get the sum of the data"
+                file:
+                  type: string
+                  example: "{'profits1': 10000, 'profits2': 2000}"
+                values:
+                  type: string
+                  example: ""
+              required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                result: "Optimized result from GPT-4"
+
+
+  /api/v1/scheduleresults2:
+    post:
+      tags:
+        - optimization
+      summary: Open endpoint
+      description: This endpoint allows you to send data and request to optimize said data to GPT-4.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                gpt:
+                  type: string
+                  example: "get the sum of the Hourly On Demand Cost- "
+                file:
+                  type: string
+                  format: binary
+                values:
+                  type: string
+                  example: "string"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                result: "Optimized result from GPT-4"
+
+
+  /api/v1/interpret_image:
+    post:
+      tags:
+        - optimization
+      summary: Open endpoint
+      description: This endpoint allows you to send data and request to optimize said data to GPT-4.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                gpt:
+                  type: string
+                  example: "What's in this image?"
+                html:
+                  type: string
+                  example: "https://capture-test-matt.s3.amazonaws.com/input/GettyImages-1389862392.jpg"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                result: "Optimized result from GPT-4"
+
+
+  /api/v1/key_generation:
+    post:
+      tags:
+        - API Keys
+      summary: Open endpoint
+      description: This endpoint allows you to send org data and get a full api key for your org.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                org:
+                  type: string
+                  example: "Vitality Robotics"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                result: "new Api Key"
+              
+  
+  /api/v1/key_rename:
+    post:
+      tags:
+        - API Keys
+      summary: Open endpoint
+      description: This endpoint allows you to update the name of your keys.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                org:
+                  type: string
+                  example: "Vitality Robotics"
+                id:
+                  type: string
+                  example: "WFFW&DWF&WFD"
+                name:
+                  type: string
+                  example: "bobs api key"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                result: "new Api update"
+
+
+  /api/v1/key_status_update:
+    post:
+      tags:
+        - API Keys
+      summary: Open endpoint
+      description: This endpoint allows you to update the status of your keys.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                org:
+                  type: string
+                  example: "Vitality Robotics"
+                id:
+                  type: string
+                  example: "WFFW&DWF&WFD"
+                status:
+                  type: string
+                  example: "deactivated"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                result: "new Api update"
+
+
+  /api/v1/key_delete:
+      post:
+        tags:
+          - API Keys
+        summary: Open endpoint
+        description: This endpoint allows you to delete a key.
+        requestBody:
+          required: true
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  org:
+                    type: string
+                    example: "Vitality Robotics"
+                  id:
+                    type: string
+                    example: "WFFW&DWF&WFD"
+        responses:
+          '200':
+            description: Successful response
+            content:
+              application/json:
+                example:
+                  result: "new Api removed"
+
+
+#API Integration
+
+  /api/v1/api_integration_gen:
+      post:
+        tags:
+          - API Integrations
+        summary: Open endpoint
+        description: This endpoint allows you to send org data and api data an and set up a new integration
+        requestBody:
+          required: true
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  org:
+                    type: string
+                    example: "Vitality Robotics"
+                  secret_key:
+                    type: string
+                    example: "YygG7FF7Ft"
+                  access_key:
+                    type: string
+                    example: "55jG7FF7Ft"
+                  request_header:
+                    type: string
+                    example: 'NAN'
+                  
+        responses:
+          '200':
+            description: Successful response
+            content:
+              application/json:
+                example:
+                  result: "new Api IntegrationS"
+              
+
+  /api/v1/full_integration_automation_request:
+    post:
+      tags:
+        - API Integrations
+      summary: Open endpoint for full integration automation request
+      description: This endpoint allows you to send organization data, API key, and JSON Swagger document to build a entire new integration. you also direct it to launch a full PR of everything it builds
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                org:
+                  type: string
+                  example: "Vitality Robotics"
+                api_key:
+                  type: string
+                  example: "YygG7FF7Ft"
+                json_doc:
+                  type: string
+                  format: binary
+                  description: JSON Swagger document to upload
+                jira_ticket_id:
+                  type: string
+                  example: "None"
+                make_PR:
+                  type: boolean
+                  description: Enable or disable full PR creation
+                  example: true
+      responses:
+        '200':
+          description: Successful integration automation request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  key:
+                    type: string
+                    description: Generated key for the integration
+                  org:
+                    type: string
+                    description: Organization name
+                  NOTICE:
+                    type: string
+                    description: Success notice
+
+
+#Marketing Automation
+  /api/v1/marketing_realease_notes_automation_request:
+      post:
+        tags:
+          - Marketing Automation
+        summary: Open endpoint for full text-based marketing Blog Post Generation
+        description: |
+          This endpoint allows you to send the code changes as txt files to an automated AI system that will turn them into a release notes blog post.
+        requestBody:
+          required: true
+          content:
+            multipart/form-data:
+              schema:
+                type: object
+                properties:
+                  file_name:
+                    type: string
+                    example: "New_Release_Blog"
+                    description: Name of the uploaded text file
+                  text_data:
+                    type: string
+                    example: " Binary file modifiedBIN +0 Bytes (100%) ...ect"
+                    description: all code changes in raw text form use if not uploading file
+                  text_file:
+                    type: string
+                    format: binary
+                    description: all code changes in txt document to upload use if not sending raw text
+        responses:
+          '200':
+            description: Successful integration automation request
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    data:
+                      type: string
+                      description: Generated md-formatted blog post content
+                    s3_path:
+                      type: string
+                      description: URL or path to the generated content (currently set to 'None')
+                    NOTICE:
+                      type: string
+                      description: Success notice
+
+
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Bearer
+      required: true
+    organization_id:
+      type: apiKey
+      name: organization_id
+      in: header
+      required: true
+

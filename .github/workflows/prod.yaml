@@ -1,0 +1,138 @@
+# name: prod
+# on:
+#   pull_request:
+#     branches: prod
+#     types:
+#       - opened
+#       - synchronize
+#       - closed
+
+# jobs:
+#   test_and_CI:
+#     runs-on: ubuntu-latest
+#     if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+
+#     steps:
+#       - name: Checking out branch
+#         uses: actions/checkout@v4.1.1
+
+#       - name: Set up python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.9"
+
+#       - name: Setup venv
+#         run: |
+#           pip install virtualenv
+#           virtualenv venv
+#           source venv/bin/activate
+#           export VIRTUAL_ENV=$PWD/venv
+#           echo $VIRTUAL_ENV
+
+#       - name: Installing Dependencies
+#         run: |
+#           source venv/bin/activate
+#           pip install uv
+#           uv pip install -r requirements.txt
+#           uv pip install zappa
+#           uv pip install pytest
+#           uv pip install pytest-env
+
+#       - name: Installing Vitality Tools
+#         run: |
+#           source venv/bin/activate
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_aws_tools"
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_dynamo_tools"
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_secrets_manager"
+
+#       - name: Configuring AWS Credentials
+#         run: |
+#           source venv/bin/activate
+#           aws configure set region us-east-1 --profile default
+#           aws configure set output json --profile default
+#           aws configure set aws_access_key_id ${{ secrets.SCISHEILD_AWS_ACCESS_KEY }} --profile default
+#           aws configure set aws_secret_access_key ${{ secrets.SCISHEILD_AWS_SECRET_KEY }} --profile default
+
+#       # TODO: Add unit tests
+#       # - name: Test with pytest
+#       #   run: |
+#       #     source venv/bin/activate
+#       #     export ENV="prod"
+#       #     pytest --ignore functional/
+      
+#       # - name: Functional testing with helium
+#       #   run: |
+#       #     source venv/bin/activate
+#       #     export ENV="prod"
+#       #     pytest tests/functional/*
+
+#       - name: Print Success Message
+#         run: echo "CI Steps Complete."
+
+#   deploy:
+#     runs-on: ubuntu-latest
+#     if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+
+#     steps:
+#       - name: Checking out branch
+#         uses: actions/checkout@v4.1.1
+
+#       - name: Set up python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.9"
+
+#       - name: Setup venv
+#         run: |
+#           pip install virtualenv
+#           virtualenv venv
+#           source venv/bin/activate
+#           export VIRTUAL_ENV=$PWD/venv
+#           echo $VIRTUAL_ENV
+
+#       - name: Installing Dependencies
+#         run: |
+#           source venv/bin/activate
+#           pip install uv
+#           uv pip install -r requirements.txt
+#           uv pip install zappa
+#           uv pip install pytest
+#           uv pip install pytest-env
+
+#       - name: Installing Vitality Tools
+#         run: |
+#           source venv/bin/activate
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_aws_tools"
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_dynamo_tools"
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_secrets_manager"
+
+#       - name: Configuring AWS Credentials
+#         run: |
+#           source venv/bin/activate
+#           aws configure set region us-east-1 --profile default
+#           aws configure set output json --profile default
+#           aws configure set aws_access_key_id ${{ secrets.SCISHEILD_AWS_ACCESS_KEY }} --profile default
+#           aws configure set aws_secret_access_key ${{ secrets.SCISHEILD_AWS_SECRET_KEY }} --profile default
+
+#       # TODO: Add unit tests
+#       # - name: Test with pytest
+#       #   run: |
+#       #     source venv/bin/activate
+#       #     export ENV="prod"
+#       #     pytest --ignore functional/
+      
+#       # - name: Functional testing with helium
+#       #   run: |
+#       #     source venv/bin/activate
+#       #     export ENV="prod"
+#       #     pytest tests/functional/*
+
+
+#       - name: Zappa Deployments
+#         run: |
+#           source venv/bin/activate
+#           export ENV="prod"
+#           zappa update prod
+
+#       - name: Print Success Message
+#         run: echo "Successfully merged."

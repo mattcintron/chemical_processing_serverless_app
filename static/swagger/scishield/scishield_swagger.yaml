@@ -1,0 +1,227 @@
+openapi: 3.0.0
+info:
+  title: SciShield - Chem-Snap  API
+  version: 1.0.0
+
+servers:
+  # - url: https://api.labtools.ai
+  #   description: Production server
+  - url: https://ki1lwr1b1a.execute-api.us-east-1.amazonaws.com/dev 
+    description: Development server
+  - url: http://localhost:5000
+    description: Local development server
+
+paths:
+  /api/v1/status:
+    get:
+      tags:
+        - api
+      summary: Check API status
+      description: This endpoint can be used to check the status of the API.
+      responses:
+        '200':
+          description: Successful response if online
+
+  /api/v1/secure:
+    post:
+      tags:
+        - api
+      summary: Secure endpoint
+      description: This endpoint requires Api-Key and organization_id authentication as request headers. 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                  description: Data to be sent with the request
+
+      responses:
+        '200':
+          description: Successful response
+        '401':
+          description: Invalid API key or organization_id
+      security:
+        - BearerAuth: []
+        - organization_id: []
+
+  /api/v1/unsecure:
+    get:
+      tags:
+        - api
+      summary: Unsecure endpoint
+      description: This endpoint does not require any authentication.
+      responses:
+        '200':
+          description: Successful response
+
+  /chem-snap/image_upload_url:
+    post:
+      tags:
+        - image processing
+      summary: Open endpoint
+      description: This endpoint allows you to send image data with url.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                org:
+                    type: string
+                    example: "scishield"
+                api_key:
+                    type: string
+                    example: "your-api-key-here"
+                html:
+                  type: string
+                  example: "https://vitality-client-projects.s3.amazonaws.com/scishield/capture-testing/input/chem_labels/T600401000__30UC21_v1.png"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                result: "Optimized result from GPT-4"
+
+  /chem-snap/image_upload_b64:
+    post:
+      tags:
+        - image processing
+      summary: Open endpoint
+      description: This endpoint allows you to send image file data to gpt4.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                org:
+                    type: string
+                    example: "scishield"
+                api_key:
+                    type: string
+                    example: "your-api-key-here"
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                result: "Optimized result from GPT-4"
+
+  # /chem-snap/claude35/sonnet/image_upload:
+  #     post:
+  #       tags:
+  #         - Claude Ai powered image processing
+  #       summary: Open endpoint
+  #       description: This endpoint allows you to send image file data to Calude's, sonnet 3.5 - bedrock-2023-05-31 model .
+  #       requestBody:
+  #         required: true
+  #         content:
+  #           multipart/form-data:
+  #             schema:
+  #               type: object
+  #               properties:
+  #                 org:
+  #                     type: string
+  #                     example: "scishield"
+  #                 api_key:
+  #                     type: string
+  #                     example: "your-api-key-here"
+  #                 file:
+  #                   type: string
+  #                   format: binary
+  #       responses:
+  #         '200':
+  #           description: Successful response
+  #           content:
+  #             application/json:
+  #               example:
+  #                 result: "Optimized result from Calude -bedrock-2023-05-31 "
+
+  # /chem-snap/claude3/sonnet/image_upload:
+  #       post:
+  #         tags:
+  #           - Claude Ai powered image processing
+  #         summary: Open endpoint
+  #         description: This endpoint allows you to send image file data to Calude's, sonnet 3 - bedrock-2023-05-31 model .
+  #         requestBody:
+  #           required: true
+  #           content:
+  #             multipart/form-data:
+  #               schema:
+  #                 type: object
+  #                 properties:
+  #                   org:
+  #                       type: string
+  #                       example: "scishield"
+  #                   api_key:
+  #                       type: string
+  #                       example: "your-api-key-here"
+  #                   file:
+  #                     type: string
+  #                     format: binary
+  #         responses:
+  #           '200':
+  #             description: Successful response
+  #             content:
+  #               application/json:
+  #                 example:
+  #                   result: "Optimized result from Calude -bedrock-2023-05-31 "
+
+  # /chem-snap/claude3/haiku/image_upload:
+  #       post:
+  #         tags:
+  #           - Claude Ai powered image processing
+  #         summary: Open endpoint
+  #         description: This endpoint allows you to send image file data to Calude's, haiku - bedrock-2023-05-31 model .
+  #         requestBody:
+  #           required: true
+  #           content:
+  #             multipart/form-data:
+  #               schema:
+  #                 type: object
+  #                 properties:
+  #                   org:
+  #                       type: string
+  #                       example: "scishield"
+  #                   api_key:
+  #                       type: string
+  #                       example: "your-api-key-here"
+  #                   file:
+  #                     type: string
+  #                     format: binary
+  #         responses:
+  #           '200':
+  #             description: Successful response
+  #             content:
+  #               application/json:
+  #                 example:
+  #                   result: "Optimized result from Calude -bedrock-2023-05-31 "
+
+
+
+
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Bearer
+      required: true
+    organization_id:
+      type: apiKey
+      name: organization_id
+      in: header
+      required: true
+

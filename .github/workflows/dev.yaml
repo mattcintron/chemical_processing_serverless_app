@@ -1,0 +1,176 @@
+# name: dev
+# on:
+#   push:
+#     branches-ignore:
+#       - dev
+#       - prod
+#   pull_request:
+#     branches: dev
+#     types:
+#       - opened
+#       - synchronize
+#       - closed
+
+# jobs:
+#   test_and_CI:
+#     runs-on: ubuntu-latest
+#     if: ${{ (github.event_name == 'push' && !contains('dev', github.ref) && !contains('prod', github.ref)) }}
+
+#     steps:
+#       - name: Checking out branch
+#         uses: actions/checkout@v4.1.1
+
+#       - name: Set up python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.9"
+
+#       - name: Setup venv
+#         run: |
+#           pip install virtualenv
+#           virtualenv venv
+#           source venv/bin/activate
+#           export VIRTUAL_ENV=$PWD/venv
+#           echo $VIRTUAL_ENV
+
+#       - name: Installing Dependencies
+#         run: |
+#           source venv/bin/activate
+#           pip install uv
+#           uv pip install -r requirements.txt
+#           uv pip install zappa
+#           uv pip install pytest
+#           uv pip install pytest-env
+
+#       - name: Installing Vitality Tools
+#         run: |
+#           source venv/bin/activate
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_aws_tools"
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_dynamo_tools"
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_secrets_manager"
+
+#       - name: Configuring AWS Credentials
+#         run: |
+#           source venv/bin/activate
+#           aws configure set region us-east-1 --profile default
+#           aws configure set output json --profile default
+#           aws configure set aws_access_key_id ${{ secrets.SCISHEILD_AWS_ACCESS_KEY }} --profile default
+#           aws configure set aws_secret_access_key ${{ secrets.SCISHEILD_AWS_SECRET_KEY }} --profile default
+
+#       # TODO: Add unit tests
+#       # - name: Test with pytest
+#       #   run: |
+#       #     source venv/bin/activate
+#       #     export ENV="dev"
+#       #     pytest --ignore functional/
+      
+#       # - name: Functional testing with helium
+#       #   run: |
+#       #     source venv/bin/activate
+#       #     export ENV="dev"
+#       #     pytest tests/functional/*
+
+#       - name: Optional deploy on commit
+#         if: ${{ contains(github.event.head_commit.message, '#deploy') }}
+#         run: |
+#           # Add your job steps here
+#           source venv/bin/activate
+#           export ENV="dev"
+#           zappa update dev
+#           echo "Deployed to dev on commit, not merge."
+  
+#       - name: Get changed files
+#         if: ${{ contains(github.event.head_commit.message, '#deploy') }}
+#         id: changed-files
+#         uses: tj-actions/changed-files@v37
+  
+#       - name: Upload changed files
+#         if: ${{ contains(github.event.head_commit.message, '#deploy') }}
+#         run: |
+#           for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+#             echo "$file was changed";
+            
+#             # Check if the file is inside the "/static" folder
+#             if [[ $file == static/* ]]; then
+#               python3 app.py --upload-to-s3 
+#               break  # Break the loop after running the script once
+#             fi
+#           done
+          
+#       - name: Print Success Message
+#         run: echo "CI Steps Complete."
+
+#   deploy:
+#     runs-on: ubuntu-latest
+#     if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
+
+#     steps:
+#       - name: Checking out branch
+#         uses: actions/checkout@v4.1.1
+
+#       - name: Set up python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.9"
+
+#       - name: Setup venv
+#         run: |
+#           pip install virtualenv
+#           virtualenv venv
+#           source venv/bin/activate
+#           export VIRTUAL_ENV=$PWD/venv
+#           echo $VIRTUAL_ENV
+
+#       - name: Installing Dependencies
+#         run: |
+#           source venv/bin/activate
+#           pip install uv
+#           uv pip install -r requirements.txt
+#           uv pip install zappa
+#           uv pip install pytest
+#           uv pip install pytest-env
+
+#       - name: Installing Vitality Tools
+#         run: |
+#           source venv/bin/activate
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_aws_tools"
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_dynamo_tools"
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_secrets_manager"
+
+#       - name: Configuring AWS Credentials
+#         run: |
+#           source venv/bin/activate
+#           aws configure set region us-east-1 --profile default
+#           aws configure set output json --profile default
+#           aws configure set aws_access_key_id ${{ secrets.SCISHEILD_AWS_ACCESS_KEY }} --profile default
+#           aws configure set aws_secret_access_key ${{ secrets.SCISHEILD_AWS_SECRET_KEY }} --profile default
+
+#       # TODO: Add unit tests
+#       # - name: Test with pytest
+#       #   run: |
+#       #     source venv/bin/activate
+#       #     export ENV="dev"
+#       #     pytest --ignore functional/
+      
+#       # - name: Functional testing with helium
+#       #   run: |
+#       #     source venv/bin/activate
+#       #     export ENV="dev"
+#       #     pytest tests/functional/*
+
+#       # - name: Update the readme
+#       #   run: |
+#       #       source venv/bin/activate
+#       #       python3 hooks/update-readme-version.py patch version.json README.md "${{ github.ref }}"
+#       #       git config user.email github-actions@github.com
+#       #       git config user.name github-actions
+#       #       git add .
+          
+#       - name: Zappa Deployments
+#         run: |
+#           source venv/bin/activate
+#           export ENV="dev"
+#           zappa update dev
+
+#       - name: Print Success Message
+#         run: echo "Successfully merged."

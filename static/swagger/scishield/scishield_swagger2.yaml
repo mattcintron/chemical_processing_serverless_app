@@ -1,0 +1,180 @@
+openapi: 3.0.0
+info:
+  title: SciShield - Chemical Classification API
+  version: 1.0.0
+
+servers:
+  # - url: https://api.labtools.ai
+  #   description: Production server
+  - url: https://ki1lwr1b1a.execute-api.us-east-1.amazonaws.com/dev 
+    description: Development server
+  - url: http://localhost:5000
+    description: Local development server
+
+paths:
+  /api/v1/status:
+    get:
+      tags:
+        - api
+      summary: Check API status
+      description: This endpoint can be used to check the status of the API.
+      responses:
+        '200':
+          description: Successful response if online
+
+  /api/v1/secure:
+    post:
+      tags:
+        - api
+      summary: Secure endpoint
+      description: This endpoint requires Api-Key and organization_id authentication as request headers. 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                  description: Data to be sent with the request
+
+      responses:
+        '200':
+          description: Successful response
+        '401':
+          description: Invalid API key or organization_id
+      security:
+        - BearerAuth: []
+        - organization_id: []
+
+  /api/v1/unsecure:
+    get:
+      tags:
+        - api
+      summary: Unsecure endpoint
+      description: This endpoint does not require any authentication.
+      responses:
+        '200':
+          description: Successful response
+
+  /chemical_classification/predict-chemicals-upload:
+    post:
+      tags:
+        - chemical processing
+      summary: Predict Chemicals from Uploaded CSV
+      description: This endpoint allows users to upload a CSV file and predicts if rows represent chemicals.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                org:
+                  type: string
+                  description: Organization identifier
+                  example: "scishield"
+                api_key:
+                  type: string
+                  description: API key for authentication
+                  example: "your-api-key-here"
+                file:
+                  type: string
+                  format: binary
+                  description: The CSV file to be uploaded for processing.
+      responses:
+        '200':
+          description: Predictions for each row in the uploaded CSV file.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  predictions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        row:
+                          type: array
+                          items:
+                            type: string
+                        prediction:
+                          type: string
+                          description: Result for the row (e.g., "Chemical" or "Not a Chemical").
+        '400':
+          description: Bad request, such as missing fields or invalid file format.
+        '401':
+          description: Invalid `api_key` or `org`.
+        '500':
+          description: Internal server error.
+
+  /chemical_classification/predict-chemicals-json:
+    post:
+      tags:
+        - chemical processing
+      summary: Predict chemicals from JSON input
+      description: This endpoint takes in a JSON payload containing rows of chemical data and predicts if each row represents a chemical.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                org:
+                  type: string
+                  example: "scishield"
+                  description: Organization identifier
+                api_key:
+                  type: string
+                  example: "your-api-key-here"
+                  description: API key for authentication
+                rows:
+                  type: array
+                  description: A list of rows, where each row contains the data to be analyzed.
+                  items:
+                    type: object
+                    properties:
+                      Number:
+                        type: string
+                        example: "N04010"
+                      Part_Description:
+                        type: string
+                        example: "MScn Dp Well Solv. 0.4 um Philic NS 10PK"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              example:
+                predictions:
+                  - row:
+                      Number: "N04010"
+                      Part_Description: "MScn Dp Chem Well Solv. 0.4 um Philic NS 10PK"
+                    prediction: "Chemical"
+                  - row:
+                      Number: "11875119"
+                      Part_Description: "RPMI 1640 Medium"
+                    prediction: "Not a Chemical"
+        '400':
+          description: Bad request (e.g., invalid or missing fields)
+        '500':
+          description: Internal server error
+
+
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Bearer
+      required: true
+    organization_id:
+      type: apiKey
+      name: organization_id
+      in: header
+      required: true
+
