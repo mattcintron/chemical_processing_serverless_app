@@ -158,14 +158,14 @@ so that the Deployment will work properly
 
 Management Tools - you should remove these and find a way to interact with DDB and AWS secrets manager directly for your code
 as they are private tools so that the Deployment will work properly
-#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_aws_tools"
-#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_dynamo_tools"
-#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_secrets_manager"
+#####           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_aws_tools"
+#####             pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_dynamo_tools"
+#####             pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_secrets_manager"
 
 
 AWS Access
-#           aws configure set aws_access_key_id ${{ secrets.SCISHEILD_AWS_ACCESS_KEY }} --profile default
-#           aws configure set aws_secret_access_key ${{ secrets.SCISHEILD_AWS_SECRET_KEY }} --profile default
+#####             aws configure set aws_access_key_id ${{ secrets.SCISHEILD_AWS_ACCESS_KEY }} --profile default
+#####             aws configure set aws_secret_access_key ${{ secrets.SCISHEILD_AWS_SECRET_KEY }} --profile default
 
 > **Note**: The `.github/workflows/` directory contains CI/CD automation scripts. These are commented out to prevent accidental execution without proper AWS credentials.
 
