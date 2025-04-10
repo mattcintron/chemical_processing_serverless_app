@@ -36,7 +36,7 @@
 
 ## 🧪 About the Project
 
-This project was built as a demonstration of how language models (LLMs) can be applied in scientific environments. It was developed for a proof-of-concept engagement with the company **SciShield**. All proprietary data and internal code have been excluded.
+This project was built as a example of how language models (LLMs) can be applied in scientific environments. It was developed for a proof-of-concept demo of service. All proprietary data and internal code have been excluded.
 
 The application uses LLM agents orchestrated via an agnostic process to:
 - Parse chemical label images into structured data
