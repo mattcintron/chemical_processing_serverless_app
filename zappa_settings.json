@@ -2,8 +2,8 @@
     "dev": {
         "app_function": "app.app",
         "aws_region": "us-east-1",
-        // "domain": "app.scisheild.com",
-        //"certificate_arn": "arn:aws:acm:us-east-1:992382558816:certificate/af8c14c4-f264-4c7b-9fd4-aeef44306ca5",
+        // "domain": "<your custom domain>",
+        //"certificate_arn": "< your aws certificate_arn >",
         "profile_name": "default",
         "project_name": "scisheild-serverless-app",
         "runtime": "python3.9",
@@ -24,8 +24,8 @@
     "prod": {
         "app_function": "app.app",
         "aws_region": "us-east-1",
-        // "domain": "qa.scisheild.com",
-        //"certificate_arn": "arn:aws:acm:us-east-1:992382558816:certificate/af8c14c4-f264-4c7b-9fd4-aeef44306ca5",
+        // "domain": "<your custom domain>",
+        //"certificate_arn": "< your aws certificate_arn >",
         "profile_name": "default",
         "project_name": "scisheild-serverless-app",
         "runtime": "python3.9",

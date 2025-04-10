@@ -69,14 +69,14 @@ The system integrates with **AWS Bedrock**, and utilizes tools like **GPT** **Cl
 - Initializes the Flask application
 - Hosts API endpoints and Swagger documentation UIs
 
-### 2. `routes.py`
+### 2. `integrations/scishield/scishield_routes.py`
 - 📍 **Swagger URL**: [`http://127.0.0.1:5000/chem-snap/docs`](http://127.0.0.1:5000/chem-snap/docs)
 - Contains endpoints that:
   - Accept chemical label images
   - Use LLMs to extract structured chemical information
   - Return JSON-formatted output
 
-### 3. `routes2.py`
+### 3. `integrations/scishield/scishield_routes2.py`
 - 📍 **Swagger URL**: [`http://127.0.0.1:5000/chemical_classification/docs`](http://127.0.0.1:5000/chemical_classification/docs)
 - Accepts inventory data (in JSON format)
 - Evaluates each row to determine:
@@ -109,6 +109,10 @@ venv\Scripts\activate.bat
 ```bash
 pip install -r requirements.txt
 ```
+#### Secrets Managment - 
+The current implementation uses a custom lib - vitality tools.secrets_manager tools 
+to manage secrets within AWS secrets manager - you will have to replace this with your 
+own way of interacting with API secrets to use fully.
 
 ### 3. Run the Flask server locally:
 
@@ -149,16 +153,24 @@ To fully deploy the application, ensure your AWS account has access to:
   - Lambda and Route 53 manage hosting and DNS
   - Optional: Configure AWS custom domain support
 
+Make sure to have your own AWS access keys and secrets management set up in your github account
+so that the Deployment will work properly
+
+Management Tools - you should remove these and find a way to interact with DDB and AWS secrets manager directly for your code
+as they are private tools so that the Deployment will work properly
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_aws_tools"
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_dynamo_tools"
+#           pip install "git+https://${{ secrets.GHA_VITALITYTOOLS_TOKEN }}@github.com/Vitality-Robotics-Inc/vitality-tools.git@v1.0.2#subdirectory=vitality_secrets_manager"
+
+
+AWS Access
+#           aws configure set aws_access_key_id ${{ secrets.SCISHEILD_AWS_ACCESS_KEY }} --profile default
+#           aws configure set aws_secret_access_key ${{ secrets.SCISHEILD_AWS_SECRET_KEY }} --profile default
+
 > **Note**: The `.github/workflows/` directory contains CI/CD automation scripts. These are commented out to prevent accidental execution without proper AWS credentials.
 
 ---
 
-## 🛣️ Roadmap
-
-- [ ] Add support for additional chemical classification models
-- [ ] Containerize for local Docker-based testing
-
----
 
 ## 📜 License
 
